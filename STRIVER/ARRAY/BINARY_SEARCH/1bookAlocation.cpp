@@ -1,29 +1,33 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-int findStu(vector<int> &arr, int pages){
+int findPage(vector<int> &arr2, int pages){
     int stu = 1;
-    int cntpage = 0;
-    for(int i = 0; i < arr.size(); i++){
-        if(cntpage + arr[i] <= pages){
-            cntpage += arr[i];
+    int cntPage = 0;
+    for(int i = 0; i < arr2.size(); i++){
+        if(cntPage + arr2[i] <= pages){
+            cntPage += arr2[i];
         }
         else{
             stu++;
-            cntpage = arr[i];
+            cntPage = arr2[i];
         }
     }
     return stu;
 }
 
-int findPage(vector<int> &arr, int n, int m){
+int findBook(vector<int> &arr, int n, int m){
     int l = *max_element(arr.begin(), arr.end());
-    int h = accumulate(arr.begin(), arr.end(), 0);
-
+    int h = 0;
+    for(int i = 0; i < n; i++){
+        h += arr[i];
+    }
     while(l <= h){
-        int mid = l + (h - l)/2;
-        int cntstu = findStu(arr, mid);
-        if(cntstu > m) l = mid + 1;
+        int mid = l + (h - l);
+        int cntstu = findPage(arr, mid);
+        if(cntstu > m){
+            l = mid + 1;
+        }
         else{
             h = mid - 1;
         }
@@ -31,14 +35,16 @@ int findPage(vector<int> &arr, int n, int m){
     return l;
 }
 int main(){
-    int n , m;
-    cout << "Enter the value of n and m-->";
-    cin >> n >> m;
+    int n, m;
+    cout << "Enter the size of array (n) -->";
+    cin >> n;
+    cout << "Enter the no of student(m)-->";
+    cin >> m;
+
     vector<int> arr(n);
-    cout << "Enter the value of array-->";
+    cout << "Enter the value of arr element-->";
     for(int i = 0; i < n; i++){
         cin >> arr[i];
     }
-    cout << findPage(arr, n, m);
-    return 0;
+    cout << findBook(arr, n, m);
 }

@@ -1,3 +1,7 @@
+/*Same problem as well as-->
+1.SplitArrayLargestSum(leetcode 410)
+2. Painter's Partition Problem(code360)*/
+
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -19,9 +23,13 @@ int findPage(vector<int> &arr2, int pages){
 int findBook(vector<int> &arr, int n, int m){
     int l = *max_element(arr.begin(), arr.end());
     int h = 0;
+
     for(int i = 0; i < n; i++){
         h += arr[i];
     }
+
+    if(n < m) return -1;
+
     while(l <= h){
         int mid = l + (h - l);
         int cntstu = findPage(arr, mid);

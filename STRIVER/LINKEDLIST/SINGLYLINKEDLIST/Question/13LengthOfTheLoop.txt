@@ -1,0 +1,29 @@
+//==========Function: Find the Length of a loop in LL===========
+Optimal Approach-> Tortoise and Hare Algorithm
+
+1. Detecte the loop using slow and fast pointer
+2.initialize a counter and move fast one step at a time while incrementing the counter. Continue until fast meets slow again; the counter value at this point represents the length of the loop.
+
+
+int findLength(ListNode* slow, ListNode* fast){
+        int cnt = 1;
+        slow = slow->next;
+        while(slow != fast){
+            cnt++;
+            slow = slow->next;
+        }
+        return cnt;
+    }
+    int findLengthOfLoop(ListNode *head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+        
+        while(fast != NULL && fast->next != NULL){
+            slow = slow->next;
+            fast = fast->next->next;
+            if(slow == fast){
+                return findLength(slow, fast);
+            }
+        }
+        return 0;
+    }

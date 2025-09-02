@@ -1,0 +1,157 @@
+
+//Brute Force
+
+✅ Complexity
+
+Collecting values: O(N) (where N = total nodes).
+
+Sorting: O(N log N).
+
+Rebuilding list: O(N).
+
+Total: O(N log N) time, O(N) space.
+
+
+
+🔑 Logic in Words
+
+Traverse the linked list row by row (using next).
+
+For each row, traverse vertically (using child) and store values in a vector.
+
+After collecting all values, sort them.
+
+Rebuild a single vertical sorted list using convertVertical().
+
+Return the new head.
+
+
+class Solution {
+public:
+    // 🔹 Helper function: convert a vector into a vertical linked list
+    ListNode* convertVertical(vector<int> &arr) {
+        // Step 1: Create head node from the first element
+        ListNode* head = new ListNode(arr[0]);
+        ListNode* mover = head;
+
+        // Step 2: Add remaining elements as child nodes (vertical list)
+        for (int i = 1; i < arr.size(); i++) {
+            ListNode* temp = new ListNode(arr[i]);
+            mover->child = temp; // connect vertically
+            mover = temp;
+        }
+
+        return head; // return head of new vertical list
+    }
+
+    // 🔹 Main function: flatten linked list with next + child pointers
+    ListNode* flattenLinkedList(ListNode* &head) {
+        vector<int> arr;  // Step 1: store all values
+
+        // Step 2: Traverse horizontally using `next`
+        ListNode* temp = head;
+        while (temp != NULL) {
+            ListNode* t2 = temp;
+
+            // Traverse vertically using `child`
+            while (t2 != NULL) {
+                arr.push_back(t2->val);
+                t2 = t2->child;
+            }
+
+            temp = temp->next; // move to next horizontal node
+        }
+
+        // Step 3: Sort all collected values
+        sort(arr.begin(), arr.end());
+
+        // Step 4: Rebuild a new vertical sorted linked list
+        head = convertVertical(arr);
+
+        // Step 5: Return flattened list
+        return head;
+    }
+};
+
+
+// Optimal Approach
+
+
+✅ Complexity
+
+Time Complexity:
+
+Every merge operation is O(N) (total nodes).
+
+We do merging for each horizontal list, so overall O(N * log K) (like merge K sorted lists).
+
+K = number of vertical lists.
+
+Space Complexity:
+
+O(K) recursion stack (for K horizontal lists).
+
+No extra arrays or sorting.
+
+
+🔑 Logic in Words
+
+Recursive Idea:
+
+->Flatten the list on the right (head->next).
+
+->Merge it with the current vertical list (head).
+
+Merge Function:
+
+->Works exactly like merging two sorted linked lists,
+
+->But uses child pointers instead of next.
+
+Base Case:
+
+->If head is NULL or only one vertical list remains (head->next == NULL), return head.
+
+
+class Solution {
+public:
+    // 🔹 Helper function: merge two sorted vertical lists
+    ListNode* merge(ListNode* l1, ListNode* l2) {
+        ListNode* dummy = new ListNode(-1);  // dummy head
+        ListNode* temp = dummy;
+
+        // Merge like in merge sort (but using `child` pointers)
+        while (l1 != NULL && l2 != NULL) {
+            if (l1->val < l2->val) {
+                temp->child = l1;  // attach l1
+                temp = l1;         // move temp forward
+                l1 = l1->child;    // advance l1
+            } else {
+                temp->child = l2;  // attach l2
+                temp = l2;         // move temp forward
+                l2 = l2->child;    // advance l2
+            }
+            temp->next = NULL;     // ensure `next` pointers are cut
+        }
+
+        // Attach remaining part of whichever list is left
+        if (l1) temp->child = l1;
+        else    temp->child = l2;
+
+        return dummy->child;  // return merged vertical list
+    }
+
+    // 🔹 Main function: flatten horizontally linked lists into one vertical list
+    ListNode* flattenLinkedList(ListNode* &head) {
+        // Base case: if empty or only one list, nothing to flatten
+        if (head == NULL || head->next == NULL) {
+            return head;
+        }
+
+        // Step 1: Recursively flatten the list on the right
+        ListNode* newhead = flattenLinkedList(head->next);
+
+        // Step 2: Merge current vertical list (head) with flattened right list
+        return merge(head, newhead);
+    }
+};

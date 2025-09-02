@@ -1,0 +1,130 @@
+// Brute Force-> T.C: O(N)
+                S.C: O(N)
+
+Convert the linked list into an array.
+
+Rotate the array using the reversal method.
+
+Copy the rotated values back into the linked list.
+
+Return the modified list.
+
+
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        // ✅ Base case: if the list is empty, no rotation needed
+        if (head == nullptr) return nullptr;
+
+        // Step 1: Copy all linked list values into an array
+        vector<int> arr;
+        ListNode* temp = head;
+        while (temp != nullptr) {
+            arr.push_back(temp->val);
+            temp = temp->next;
+        }
+
+        // Step 2: Calculate effective rotation
+        // Rotating n times (or multiples of n) gives the same list,
+        // so we take modulo to reduce unnecessary rotations.
+        int n = arr.size();
+        k %= n;
+
+        // Step 3: Rotate the array using the reversal algorithm
+        // Example: arr = [1,2,3,4,5], k=2
+        // 1) Reverse whole array → [5,4,3,2,1]
+        // 2) Reverse first k elements → [4,5,3,2,1]
+        // 3) Reverse remaining elements → [4,5,1,2,3]
+        reverse(arr.begin(), arr.end());          // reverse all elements
+        reverse(arr.begin(), arr.begin() + k);    // reverse first k elements
+        reverse(arr.begin() + k, arr.end());      // reverse remaining n-k elements
+
+        // Step 4: Copy rotated values back into the linked list
+        temp = head;
+        for (int i = 0; i < n; i++) {
+            temp->val = arr[i];  // assign new value
+            temp = temp->next;   // move forward
+        }
+
+        // Step 5: Return the modified linked list
+        return head;
+    }
+};
+
+
+
+
+// Optimal Approach
+
+
+🔑 Logic in Words
+
+Count the length of the list (len) and find the last node (tail).
+
+Make the list circular by connecting tail->next = head.
+
+The new head will be (len - k) steps from the old head.
+
+Example: [1,2,3,4,5], k=2, len=5 → new tail at position 3 (len-k=3).
+
+So new list = [4,5,1,2,3].
+
+Break the circular link to finalize the rotated list.
+
+
+
+
+
+class Solution {
+public:
+    // Helper function to find the k-th node (1-based index) in the linked list
+    ListNode* findNode(ListNode* head, int k) {
+        int cnt = 1;
+        ListNode* temp = head;
+
+        // Traverse until we reach the k-th node
+        while (temp != NULL) {
+            if (cnt == k) return temp;
+            cnt++;
+            temp = temp->next;
+        }
+        return temp; // if not found (should not happen in this case)
+    }
+
+    ListNode* rotateRight(ListNode* head, int k) {
+        // ✅ Base cases: if list is empty OR no rotation needed
+        if (head == NULL || k == 0) return head;
+
+        // Step 1: Find the length of the linked list and the tail node
+        ListNode* tail = head;
+        int len = 1; // start from 1 because we already have head
+        while (tail->next != NULL) {
+            len++;
+            tail = tail->next;
+        }
+
+        // Step 2: Handle rotations larger than length
+        // Rotating by multiples of len means same list
+        if (k % len == 0) return head;
+        k = k % len;
+
+        // Step 3: Make the list circular
+        tail->next = head;
+
+        // Step 4: Find the new tail
+        // The new tail will be at (len - k) position
+        ListNode* newNode = findNode(head, len - k);
+
+        // Step 5: New head will be after the new tail
+        head = newNode->next;
+
+        // Step 6: Break the circle to form a proper list
+        newNode->next = NULL;
+
+        // Step 7: Return the rotated list
+        return head;
+    }
+};
+
+✅ Time complexity = O(n) (traverse list a couple of times).
+✅ Space complexity = O(1) (no extra array used).

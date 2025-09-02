@@ -1,0 +1,27 @@
+//==========Function: Find the Starting Point of a loop in LL===========
+/*
+Optimal Approach-> Tortoise and Hare Algo
+
+1. Detecte the loop in the LL using Tortoise and Hare algo(slow move 1 step and fast move 2 step)
+2. Slow pointer Again point to head.
+3. Again Both the slow and fast Point can traverse 1 step till again meet. This is the Starting point of this loop
+*/
+node* findStartingPint(node* head){
+    node* slow = head;
+    node* fast = head;
+    while(fast != nullptr && fast->next != nullptr){
+        slow = slow->next;
+        fast = fast->next->next;
+        if(slow == fast){
+            slow = head;
+            while(slow != fast){
+                slow = slow->next;
+                fast = fast->next;
+            }
+            return slow;
+        }
+
+    }
+    return nullptr;
+
+}
